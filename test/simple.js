@@ -1,6 +1,7 @@
-QUnit.module('test');
+QUnit.module('test')
 
-test('simple test', function() {
-    var x = 0;
-    equal(++x, 1);
-});
+test('simple test', function(assert)
+{
+  var x = 0
+  assert.equal(++x, 1)
+})

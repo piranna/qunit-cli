@@ -17,9 +17,9 @@
   "bugs": "http://github.com/devongovett/qunit/issues",
   "dependencies": {
     "colors": "*",
-    "object-assign": "^2.0.0",
-    "optimist": ">=0.3",
-    "qunitjs": "^1.15.0"
+    "object-assign": "^4.0.1",
+    "optimist": ">=0.6",
+    "qunitjs": "^1.20.0"
   },
   "bin": "bin/qunit-cli",
   "preferGlobal": true
