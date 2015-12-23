@@ -129,14 +129,14 @@
           printModule(details.module);
 
         if (details.failed) {
-            console.log(('  ✖ ' + details.name).red);
+            console.log(('  ✖ ' + details.name).red.bold);
 
             errors.forEach(function(error) {
                 if (error.message)
                     console.log('    ' + error.message.red);
 
                 if (typeof error.actual !== 'undefined')
-                    console.log(('    ' + error.actual + ' != ' + error.expected).red);
+                    console.log(('    ' + error.actual + ' != ' + error.expected).red.bold);
             });
 
             errors.length = 0;
