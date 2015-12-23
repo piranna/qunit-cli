@@ -20,8 +20,9 @@ There are two ways to use qunit-cli:
     And now, require it in your test files:
 
     ```Javascript
-    if (typeof QUnit == 'undefined') // if your tests also run in the browser...
-    QUnit = require('qunit-cli');
+     // if your tests also run in the browser or want to use the test-runner...
+    if (typeof QUnit === 'undefined')
+      QUnit = require('qunit-cli');
 
     // use QUnit as you normally would.
     ```

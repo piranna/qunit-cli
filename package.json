@@ -18,8 +18,13 @@
   "dependencies": {
     "colors": "*",
     "object-assign": "^4.0.1",
-    "optimist": ">=0.6",
+    "optimist": ">=0.6"
+  },
+  "devDependencies": {
     "qunitjs": "^1.20.0"
+  },
+  "peerDependencies": {
+    "qunitjs": "*"
   },
   "bin": "server.js",
   "preferGlobal": true
