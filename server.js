@@ -17,7 +17,7 @@ var files = argv._;
 
 // Resolve modules
 var resolve = require('path').resolve;
-var QUnit   = require('..');
+var QUnit   = require('./index');
 
 // Define QUnit globals
 global.QUnit = QUnit;
