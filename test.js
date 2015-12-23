@@ -1,19 +1,22 @@
 #!/usr/bin/env node
 
 if (typeof QUnit === 'undefined')
-  QUnit = require('qunit-cli')
+{
+  QUnit = require('./index')
+  QUnit.load()
+}
 
 
 QUnit.module('test')
 
-test('failed', function(assert)
+QUnit.test('failed', function(assert)
 {
   assert.ok(false)
 })
 
-skip('skipped', function(){})
+QUnit.skip('skipped', function(){})
 
-test('passed', function(assert)
+QUnit.test('passed', function(assert)
 {
   var x = 0
   assert.equal(++x, 1)
