@@ -1,83 +1,86 @@
 #!/usr/bin/env node
 
-var fs = require('fs');
+var fs      = require('fs')
+var extname = require('path').extname
+var resolve = require('path').resolve
 
-var extname = require('path').extname;
+var assign   = require('object-assign')
+var optimist = require('optimist')
+
+var QUnit = require('./index')
+
 
 // Request at least one test file as parameter
-var argv = require('optimist')
+var argv = optimist
     .alias('code', 'c')
     .describe('code', 'Path to code loaded globally')
     .demand(1)
-    .argv;
+    .argv
 
-var assign = require('object-assign')
-
-var files = argv._;
-
-// Resolve modules
-var resolve = require('path').resolve;
-var QUnit   = require('./index');
+var files = argv._
 
 // Define QUnit globals
-global.QUnit = QUnit;
+global.QUnit = QUnit
 
-assign(global, QUnit);
+assign(global, QUnit)
 
-function setGlobal(code) {
-  code = code.split(':');
+function setGlobal(code)
+{
+  code = code.split(':')
+  var namespace = code.shift()
 
-  var namespace;
-  if (code.length > 1) {
-    namespace = code[0];
-    code      = code[1];
-  } else {
-    code = code[0];
+  if(code.length)
+    code = code.join(':')
+  else
+  {
+    code = namespace
+    namespace = ''
   }
 
-  code = require(resolve(code));
-  if (namespace) {
-    global[namespace] = code;
-  } else {
-    assign(global, code);
-  }
+  code = require(resolve(code))
+  if(namespace)
+    global[namespace] = code
+  else
+    assign(global, code)
 }
 
 // Expose exports of code globally
-var code = argv.code;
-if (code) {
-  code = Array.isArray(code) ? code : [code];
-  code.forEach(setGlobal);
+var code = argv.code
+if(code)
+{
+  if(!(code instanceof Array)) code = [code]
+
+  code.forEach(setGlobal)
 }
 
-// Load QUnit test framework
-var config = QUnit.extend({}, QUnit.config);
-QUnit.load();
+// [Hack] Load QUnit test framework allowing config to be set by plugins
+var config = QUnit.extend({}, QUnit.config)
+QUnit.load()
 QUnit.extend(QUnit.config, config)
 
 // Run tests
-files.forEach(function(file) {
-  file = resolve(file);
+files.forEach(function(file)
+{
+  file = resolve(file)
 
   fs.stat(file, function(error, stats)
   {
-    if(error) return console.warn(error);
+    if(error) return console.warn(error)
 
-    if(stats.isDirectory())
-      fs.readdir(file, function(error, files)
+    if(!stats.isDirectory()) return require(file)
+
+    fs.readdir(file, function(error, files)
+    {
+      if(error) return console.warn(error)
+
+      files.forEach(function(name)
       {
-        if(error) return console.warn(error);
+        name = resolve(file, name)
 
-        files.forEach(function(name)
-        {
-          name = resolve(file, name);
+        if(extname(name) === '.js') return require(name)
 
-          if(extname(name) != '.js') return console.warn('Unknown file type:',name)
-
-          require(name)
-        });
-      })
-    else
-      require(file)
+        console.warn('Unknown file type:',name)
+      });
+    })
   })
 });
