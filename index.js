@@ -120,6 +120,8 @@
             errors.push(details);
     });
 
+    var skipped = 0
+
     // when a test ends, print success/failure and any errors
     QUnit.testDone(function(details) {
         // print the name of each module
@@ -138,6 +140,9 @@
             });
 
             errors.length = 0;
+        } else if (details.skipped) {
+          console.log(('  ⚠ ' + details.name).yellow);
+          skipped++;
         } else if (!argv.quiet) {
             console.log(('  ✔ ' + details.name).green);
         }
@@ -148,8 +153,12 @@
         console.log(('\nTests completed in ' + details.runtime + ' milliseconds.').grey);
         var msg = details.passed + ' tests of ' + details.total + ' passed';
 
+        if (skipped) msg += ', ' + skipped + ' skipped';
+
         if (details.failed > 0)
             console.log((msg + ', ' + details.failed + ' failed.').red.bold);
+        else if (skipped)
+            console.log((msg + '.').yellow.bold);
         else
             console.log((msg + '.').green.bold);
 

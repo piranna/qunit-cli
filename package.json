@@ -8,7 +8,7 @@
     "url": "http://badassjs.com/"
   },
   "scripts": {
-    "test": "./server.js test/simple.js"
+    "test": "./server.js test.js"
   },
   "repository": {
     "type": "git",
