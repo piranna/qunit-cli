@@ -3,6 +3,7 @@ var optimist = require('optimist')
 var QUnit    = require('qunitjs')
 
 
+var collapse = false
 var consts = {}
 var errors = []
 var printedModule = false
@@ -18,6 +19,8 @@ var argv = optimist.argv
 
 // Define normal config parameters
 optimist
+    .describe('collapse', 'Collapses consecutive failing tests showing only the details for the first failed test')
+    .default('collapse', true)
     .describe('hidepassed', 'Show only the failing tests, hiding all that pass')
     .default('hidepassed', false)
     .alias('module', 'm')
@@ -106,6 +109,8 @@ function printModule(name)
 QUnit.moduleStart(function(details)
 {
   if(printedModule = !argv.quiet) printModule(details.name)
+
+  collapse = false
 })
 
 // when an individual assertion fails, add it to the list of errors to display
@@ -124,24 +129,31 @@ QUnit.testDone(function(details)
   {
     console.log(('  ✖ ' + details.name).red.bold)
 
-    errors.forEach(function(error)
-    {
-      if(error.message)
-        console.log('    ' + error.message.red)
+    if(!collapse)
+      errors.forEach(function(error)
+      {
+        if(error.message)
+          console.log('    ' + error.message.red)
 
-      if(error.actual !== undefined)
-        console.log(('    ' + error.actual + ' != ' + error.expected).red.bold)
-    })
+        if(error.actual !== undefined)
+          console.log(('    ' + error.actual + ' != ' + error.expected).red.bold)
+      })
 
+    collapse = QUnit.config.collapse
     errors.length = 0
+
+    return
   }
-  else if(details.skipped)
+
+  if(details.skipped)
   {
     console.log(('  ⚠ ' + details.name).yellow)
     skipped++
   }
   else if(!argv.quiet)
     console.log(('  ✔ ' + details.name).green)
+
+  collapse = false
 })
 
 // when all of the tests are done, print summary
